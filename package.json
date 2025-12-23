@@ -1,0 +1,56 @@
+{
+  "name": "lime-bike-simulator",
+  "version": "1.0.0",
+  "description": "Interactive Lime bike ride simulator for London with traffic light cost analysis",
+  "type": "module",
+  "main": "./dist/lime-bike-simulator.umd.js",
+  "module": "./dist/lime-bike-simulator.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/lime-bike-simulator.es.js",
+      "require": "./dist/lime-bike-simulator.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "effect": "^3.19.13",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.8",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.7.0"
+  },
+  "keywords": [
+    "lime",
+    "bike",
+    "simulator",
+    "london",
+    "cycling",
+    "traffic-lights",
+    "react",
+    "leaflet"
+  ],
+  "license": "MIT"
+}
