@@ -6,8 +6,6 @@ interface UseSimulationProps {
     trafficLights: TrafficLight[];
     totalDistance: number;
     simulationSpeed: number;
-    minWaitTime: number;
-    maxWaitTime: number;
 }
 interface UseSimulationResult {
     state: SimulationState;
@@ -17,6 +15,6 @@ interface UseSimulationResult {
     reset: () => void;
     isReady: boolean;
 }
-export declare function useSimulation({ coordinates, cumulativeDistances, trafficLights, totalDistance, simulationSpeed, minWaitTime, maxWaitTime, }: UseSimulationProps): UseSimulationResult;
+export declare function useSimulation({ coordinates, cumulativeDistances, trafficLights, totalDistance, simulationSpeed, }: UseSimulationProps): UseSimulationResult;
 export {};
 //# sourceMappingURL=useSimulation.d.ts.map

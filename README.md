@@ -1,15 +1,17 @@
 # Lime Bike Simulator
 
-An interactive React component that simulates Lime bike rides in London, showing real-time route playback with cost calculations and traffic light wait time analysis.
+An interactive React component that simulates Lime bike rides, analyzing how per-minute pricing generates revenue from traffic stops.
 
 ## Features
 
-- Interactive map of London using Leaflet + OpenStreetMap
+- Interactive map using Leaflet + OpenStreetMap
 - Real cycling routes from OSRM routing API
 - Automatic traffic light detection along routes via Overpass API
 - Realistic bike physics: 15 mph max speed with acceleration/braking
-- Live cost calculation with Lime's pricing model
-- Comparison between ideal ride cost and actual cost (with traffic light waits)
+- Live cost calculation with Lime's per-minute pricing model
+- **Pricing model comparison**: Per-minute vs per-distance vs motion-only
+- **Live revenue counter**: Shows earnings accumulating while stopped
+- **Social sharing**: Share your ride data on Twitter/LinkedIn
 - Animated bike icon moving along the route
 - Configurable via props
 
@@ -66,8 +68,6 @@ function App() {
 | `unlockFee` | `number` | `1.00` | Unlock fee in GBP |
 | `perMinuteRate` | `number` | `0.20` | Per-minute rate in GBP |
 | `simulationSpeed` | `number` | `10` | Simulation speed multiplier (e.g., 10 = 10x real-time) |
-| `minWaitTime` | `number` | `15` | Minimum traffic light wait time in seconds |
-| `maxWaitTime` | `number` | `90` | Maximum traffic light wait time in seconds |
 | `width` | `string \| number` | `'100%'` | Component width |
 | `height` | `string \| number` | `600` | Component height |
 | `showControls` | `boolean` | `true` | Show play/pause/reset controls |
@@ -90,17 +90,35 @@ The simulator models realistic Lime bike physics:
 - **Maximum speed**: 15 mph (24 km/h)
 - **Acceleration time**: 5 seconds to reach max speed
 - **Braking time**: 3 seconds to stop
-- **Traffic light waits**: Random duration between minWaitTime and maxWaitTime
+
+## Traffic Light Simulation
+
+Traffic lights use realistic timing cycles:
+
+- **Cycle duration**: 60-120 seconds per light
+- **Phase distribution**: ~45% red, ~50% green, ~5% yellow
+- **Random phase offset**: Each light starts at a different point in its cycle
+- **Visual feedback**: Upcoming lights show their current phase (red/yellow/green)
+- **Green lights**: Cyclist passes through without stopping
+- **Red/yellow lights**: Cyclist waits until green
 
 ## How Cost is Calculated
 
 ```
 Total Cost = Unlock Fee + (Total Minutes × Per-Minute Rate)
 
-Wasted Money = (Time Waiting at Lights) × Per-Minute Rate
+Stop-Time Revenue = (Time Stopped at Lights) × Per-Minute Rate
 ```
 
-The component shows both the actual cost and an "ideal cost" (what the ride would cost without any traffic light stops) so riders can see exactly how much money they're losing to traffic infrastructure.
+The component compares three pricing models:
+
+| Model | Calculation |
+|-------|-------------|
+| **Per-minute (current)** | Unlock + (total time × £0.20/min) |
+| **Per-distance** | Unlock + (distance × £0.15/km) |
+| **Motion-only** | Unlock + (moving time × £0.20/min) |
+
+This shows how much revenue is generated specifically from time spent stopped at traffic lights - time when the rider has no choice but to wait.
 
 ## Development
 

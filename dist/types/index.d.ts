@@ -20,8 +20,6 @@ export interface LimeBikeSimulatorProps {
     unlockFee?: number;
     perMinuteRate?: number;
     simulationSpeed?: number;
-    minWaitTime?: number;
-    maxWaitTime?: number;
     width?: string | number;
     height?: string | number;
     showControls?: boolean;
@@ -50,12 +48,34 @@ export interface OSRMResponse {
     code: string;
     routes: Route[];
 }
+export declare const TRAFFIC_LIGHT_TIMING: {
+    readonly MIN_CYCLE_TIME: 60;
+    readonly MAX_CYCLE_TIME: 120;
+    readonly RED_RATIO: 0.45;
+    readonly GREEN_RATIO: 0.5;
+    readonly YELLOW_DURATION: 4;
+};
+export interface TrafficLightTiming {
+    cycleTime: number;
+    redDuration: number;
+    greenDuration: number;
+    yellowDuration: number;
+    phaseOffset: number;
+}
+export type TrafficLightPhase = 'red' | 'yellow' | 'green';
+export declare function getTrafficLightPhase(timing: TrafficLightTiming, elapsedTime: number): {
+    phase: TrafficLightPhase;
+    timeInPhase: number;
+    timeUntilGreen: number;
+};
+export declare function generateTrafficLightTiming(): TrafficLightTiming;
 export interface TrafficLight {
     id: number;
     lat: number;
     lng: number;
     routeIndex: number;
     distanceFromStart: number;
+    timing: TrafficLightTiming;
 }
 export interface OverpassNode {
     type: 'node';
@@ -87,8 +107,15 @@ export interface CostBreakdown {
     waitingCost: number;
     totalCost: number;
     idealCost: number;
-    wastedMoney: number;
+    stopRevenue: number;
+    distanceBasedCost: number;
+    motionOnlyCost: number;
 }
+export declare const PRICING_MODELS: {
+    readonly PER_MINUTE: 0.2;
+    readonly PER_KM: 0.15;
+    readonly UNLOCK_FEE: 1;
+};
 export interface RouteSegment {
     startIndex: number;
     endIndex: number;

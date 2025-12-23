@@ -85,8 +85,22 @@
   font-size: 12px;
 }
 
-.costWasted .costRowValue {
-  color: #ef4444;
+.stopRevenue .costRowValue {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.liveRevenue {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: 13px;
+  animation: revenueGrow 0.5s ease-out;
+}
+
+@keyframes revenueGrow {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 /* Time stats - inline */
@@ -484,6 +498,150 @@
   opacity: 0.8;
 }
 
+/* Alternative Pricing comparison */
+.alternativePricing {
+  background: rgba(15, 52, 96, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.altPricingTitle {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.altPricingTable {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.altPricingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  padding: 3px 0;
+}
+
+.altPricingLabel {
+  color: #999;
+}
+
+.altPricingValue {
+  font-weight: 600;
+  color: #fff;
+}
+
+.altPricingDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 6px 0;
+}
+
+.altPricingHighlight {
+  background: rgba(245, 158, 11, 0.15);
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border-radius: 4px;
+}
+
+.altPricingHighlight .altPricingLabel {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.altPricingHighlight .altPricingValue {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+.altPricingNote {
+  font-size: 9px;
+  color: #666;
+  margin-top: 6px;
+  text-align: right;
+}
+
+/* Share buttons */
+.shareButtons {
+  background: rgba(15, 52, 96, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.shareTitle {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.shareButtonGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.shareButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareButton:hover {
+  transform: translateY(-1px);
+}
+
+.shareButton svg {
+  flex-shrink: 0;
+}
+
+.shareTwitter {
+  background: #000;
+  color: #fff;
+}
+
+.shareTwitter:hover {
+  background: #1a1a1a;
+}
+
+.shareLinkedIn {
+  background: #0a66c2;
+  color: #fff;
+}
+
+.shareLinkedIn:hover {
+  background: #0958a8;
+}
+
+.shareCopy {
+  background: rgba(255, 255, 255, 0.1);
+  color: #aaa;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shareCopy:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
 /* Responsive - stack on very small screens */
 @media (max-width: 400px) {
   .infoPanel {
@@ -500,5 +658,13 @@
     width: 100%;
     margin-left: 0;
     justify-content: space-between;
+  }
+
+  .shareButtonGroup {
+    flex-wrap: wrap;
+  }
+
+  .shareButton {
+    flex: 1 1 calc(50% - 3px);
   }
 }

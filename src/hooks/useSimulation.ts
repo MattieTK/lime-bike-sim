@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { SimulationState, TrafficLight, InterpolatedPosition } from '../types';
-import { BIKE_PHYSICS } from '../types';
+import { BIKE_PHYSICS, getTrafficLightPhase } from '../types';
 import {
   interpolatePosition,
   calculateCurrentSpeed,
@@ -12,8 +12,6 @@ interface UseSimulationProps {
   trafficLights: TrafficLight[];
   totalDistance: number;
   simulationSpeed: number;
-  minWaitTime: number;
-  maxWaitTime: number;
 }
 
 interface UseSimulationResult {
@@ -25,18 +23,12 @@ interface UseSimulationResult {
   isReady: boolean;
 }
 
-function getRandomWaitTime(min: number, max: number): number {
-  return min + Math.random() * (max - min);
-}
-
 export function useSimulation({
   coordinates,
   cumulativeDistances,
   trafficLights,
   totalDistance,
   simulationSpeed,
-  minWaitTime,
-  maxWaitTime,
 }: UseSimulationProps): UseSimulationResult {
   const [state, setState] = useState<SimulationState>({
     status: 'idle',
@@ -61,7 +53,6 @@ export function useSimulation({
   const segmentStartDistanceRef = useRef<number>(0);
   const isStoppingRef = useRef<boolean>(false);
   const isAcceleratingRef = useRef<boolean>(true); // Track if accelerating from segment start
-  const waitTimesRef = useRef<number[]>([]);
 
   // Store current props in refs for stable animation callback
   const coordinatesRef = useRef(coordinates);
@@ -69,7 +60,6 @@ export function useSimulation({
   const trafficLightsRef = useRef(trafficLights);
   const totalDistanceRef = useRef(totalDistance);
   const simulationSpeedRef = useRef(simulationSpeed);
-  const minWaitTimeRef = useRef(minWaitTime);
 
   // Keep refs updated
   useEffect(() => {
@@ -78,31 +68,18 @@ export function useSimulation({
     trafficLightsRef.current = trafficLights;
     totalDistanceRef.current = totalDistance;
     simulationSpeedRef.current = simulationSpeed;
-    minWaitTimeRef.current = minWaitTime;
-  }, [coordinates, cumulativeDistances, trafficLights, totalDistance, simulationSpeed, minWaitTime]);
+  }, [coordinates, cumulativeDistances, trafficLights, totalDistance, simulationSpeed]);
 
   const isReady = coordinates.length > 0 && cumulativeDistances.length > 0;
 
   // Track route identity to detect changes
   const routeIdRef = useRef<string>('');
 
-  // Generate wait times when traffic lights change
-  useEffect(() => {
-    waitTimesRef.current = trafficLights.map(() =>
-      getRandomWaitTime(minWaitTime, maxWaitTime)
-    );
-  }, [trafficLights, minWaitTime, maxWaitTime]);
-
   const reset = useCallback(() => {
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     }
-
-    // Regenerate wait times on reset
-    waitTimesRef.current = trafficLightsRef.current.map(() =>
-      getRandomWaitTime(minWaitTimeRef.current, maxWaitTime)
-    );
 
     const coords = coordinatesRef.current;
     const startPos = coords.length > 0
@@ -128,7 +105,7 @@ export function useSimulation({
       totalWaitTime: 0,
       lightsEncountered: 0,
     });
-  }, [maxWaitTime]);
+  }, []);
 
   // Initialize/reset when route changes
   useEffect(() => {
@@ -253,10 +230,35 @@ export function useSimulation({
 
       // Check if we've reached a traffic light
       if (nextLight && newDistanceTraveled >= nextLight.distanceFromStart) {
-        waitTimeTargetRef.current = waitTimesRef.current[prev.currentTrafficLightIndex] || minWaitTimeRef.current;
+        // Check the current phase of the traffic light
+        const lightPhase = getTrafficLightPhase(nextLight.timing, prev.elapsedTime);
 
         const newPos = interpolatePosition(coords, nextLight.distanceFromStart, cumDist);
         setPosition(newPos);
+
+        // If green or yellow (with some buffer), pass through without stopping
+        if (lightPhase.phase === 'green' || (lightPhase.phase === 'yellow' && lightPhase.timeInPhase < 2)) {
+          // Green light - pass through!
+          segmentStartDistanceRef.current = nextLight.distanceFromStart;
+          isStoppingRef.current = false;
+          // Don't reset acceleration - maintain speed through green light
+
+          return {
+            ...prev,
+            distanceTraveled: nextLight.distanceFromStart,
+            routeProgress: nextLight.distanceFromStart / totalDist,
+            elapsedTime: prev.elapsedTime + deltaTime,
+            currentSpeed: prev.currentSpeed, // Maintain speed
+            isWaitingAtLight: false,
+            currentWaitTime: 0,
+            currentTrafficLightIndex: prev.currentTrafficLightIndex + 1,
+            // Don't increment lightsEncountered - only count red lights
+            currentPosition: [newPos.lat, newPos.lng],
+          };
+        }
+
+        // Red or late yellow - must stop and wait
+        waitTimeTargetRef.current = lightPhase.timeUntilGreen;
 
         return {
           ...prev,

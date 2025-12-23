@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { CostBreakdown, SimulationState } from '../types';
-import { BIKE_PHYSICS } from '../types';
+import { BIKE_PHYSICS, PRICING_MODELS } from '../types';
 
 interface UseCostCalculatorProps {
   state: SimulationState;
@@ -42,8 +42,17 @@ export function useCostCalculator({
     const idealMinutes = idealTime / 60;
     const idealCost = unlockFee + (idealMinutes * perMinuteRate);
 
-    // Wasted money is the difference
-    const wastedMoney = Math.max(0, totalCost - idealCost);
+    // Stop revenue: revenue generated from time stopped at lights
+    // This is simply the waiting time multiplied by the per-minute rate
+    const stopRevenue = waitingMinutes * perMinuteRate;
+
+    // Alternative pricing models for comparison
+    // Distance-based: unlock fee + per-km rate
+    const distanceKm = totalDistance / 1000;
+    const distanceBasedCost = PRICING_MODELS.UNLOCK_FEE + (distanceKm * PRICING_MODELS.PER_KM);
+
+    // Motion-only: only charge when moving (exclude stop time)
+    const motionOnlyCost = unlockFee + (ridingMinutes * perMinuteRate);
 
     return {
       unlockFee,
@@ -51,7 +60,9 @@ export function useCostCalculator({
       waitingCost,
       totalCost,
       idealCost,
-      wastedMoney,
+      stopRevenue,
+      distanceBasedCost,
+      motionOnlyCost,
     };
   }, [state, totalDistance, unlockFee, perMinuteRate]);
 }

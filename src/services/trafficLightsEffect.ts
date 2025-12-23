@@ -1,5 +1,6 @@
 import { Effect, Schedule, pipe } from 'effect';
 import type { TrafficLight, OverpassResponse } from '../types';
+import { generateTrafficLightTiming } from '../types';
 import { haversineDistance } from './osrm';
 
 // Multiple Overpass API endpoints for failover
@@ -306,6 +307,7 @@ function parseTrafficLights(
         lng: node.lon,
         routeIndex: closestIndex,
         distanceFromStart,
+        timing: generateTrafficLightTiming(),
       };
     })
     .filter((tl): tl is TrafficLight => tl !== null);

@@ -31,10 +31,6 @@ export interface LimeBikeSimulatorProps {
   // Simulation props
   simulationSpeed?: number; // Multiplier, default: 10 (10x real-time)
 
-  // Traffic light wait simulation
-  minWaitTime?: number; // seconds, default: 15
-  maxWaitTime?: number; // seconds, default: 90
-
   // UI props
   width?: string | number;
   height?: string | number;
@@ -69,6 +65,80 @@ export interface OSRMResponse {
   routes: Route[];
 }
 
+// Traffic light timing constants
+export const TRAFFIC_LIGHT_TIMING = {
+  MIN_CYCLE_TIME: 60, // seconds
+  MAX_CYCLE_TIME: 120,
+  RED_RATIO: 0.45, // 45% of cycle is red
+  GREEN_RATIO: 0.50, // 50% of cycle is green
+  YELLOW_DURATION: 4, // 4 seconds yellow (remaining 5%)
+} as const;
+
+// Traffic light timing for realistic cycling
+export interface TrafficLightTiming {
+  cycleTime: number; // Total cycle duration in seconds
+  redDuration: number; // How long red phase lasts
+  greenDuration: number; // How long green phase lasts
+  yellowDuration: number; // How long yellow phase lasts
+  phaseOffset: number; // Random offset into the cycle (0 to cycleTime)
+}
+
+// Traffic light phase
+export type TrafficLightPhase = 'red' | 'yellow' | 'green';
+
+// Calculate current phase of a traffic light based on elapsed time
+export function getTrafficLightPhase(
+  timing: TrafficLightTiming,
+  elapsedTime: number
+): { phase: TrafficLightPhase; timeInPhase: number; timeUntilGreen: number } {
+  const { cycleTime, redDuration, greenDuration, yellowDuration, phaseOffset } = timing;
+
+  // Calculate position in cycle (0 to cycleTime)
+  const positionInCycle = (elapsedTime + phaseOffset) % cycleTime;
+
+  // Phase order: green -> yellow -> red -> (repeat)
+  if (positionInCycle < greenDuration) {
+    return {
+      phase: 'green',
+      timeInPhase: positionInCycle,
+      timeUntilGreen: 0,
+    };
+  } else if (positionInCycle < greenDuration + yellowDuration) {
+    const timeInYellow = positionInCycle - greenDuration;
+    return {
+      phase: 'yellow',
+      timeInPhase: timeInYellow,
+      timeUntilGreen: yellowDuration - timeInYellow + redDuration,
+    };
+  } else {
+    const timeInRed = positionInCycle - greenDuration - yellowDuration;
+    return {
+      phase: 'red',
+      timeInPhase: timeInRed,
+      timeUntilGreen: redDuration - timeInRed,
+    };
+  }
+}
+
+// Generate random timing for a traffic light
+export function generateTrafficLightTiming(): TrafficLightTiming {
+  const { MIN_CYCLE_TIME, MAX_CYCLE_TIME, RED_RATIO, GREEN_RATIO, YELLOW_DURATION } = TRAFFIC_LIGHT_TIMING;
+
+  const cycleTime = MIN_CYCLE_TIME + Math.random() * (MAX_CYCLE_TIME - MIN_CYCLE_TIME);
+  const redDuration = cycleTime * RED_RATIO;
+  const greenDuration = cycleTime * GREEN_RATIO;
+  const yellowDuration = YELLOW_DURATION;
+  const phaseOffset = Math.random() * cycleTime;
+
+  return {
+    cycleTime,
+    redDuration,
+    greenDuration,
+    yellowDuration,
+    phaseOffset,
+  };
+}
+
 // Traffic light types from Overpass API
 export interface TrafficLight {
   id: number;
@@ -76,6 +146,7 @@ export interface TrafficLight {
   lng: number;
   routeIndex: number; // Index in route coordinates where this light is
   distanceFromStart: number; // meters from route start
+  timing: TrafficLightTiming; // Timing for this light's cycle
 }
 
 export interface OverpassNode {
@@ -116,8 +187,18 @@ export interface CostBreakdown {
   waitingCost: number; // Cost from waiting at lights
   totalCost: number;
   idealCost: number; // Cost if there were no traffic lights
-  wastedMoney: number; // totalCost - idealCost
+  stopRevenue: number; // Revenue generated from stop time (totalCost - idealCost)
+  // Alternative pricing models for comparison
+  distanceBasedCost: number; // What ride would cost at per-km rate
+  motionOnlyCost: number; // What ride would cost if stopped time was free
 }
+
+// Alternative pricing rates for comparison
+export const PRICING_MODELS = {
+  PER_MINUTE: 0.20, // Current Lime rate (£/min)
+  PER_KM: 0.15, // Industry average distance rate
+  UNLOCK_FEE: 1.00, // Standard unlock
+} as const;
 
 // Route segment for simulation
 export interface RouteSegment {

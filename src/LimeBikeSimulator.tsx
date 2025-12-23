@@ -11,6 +11,8 @@ import { BikeMarker } from './components/Map/BikeMarker';
 import { TrafficLightMarkers } from './components/Map/TrafficLightMarkers';
 import { CostDisplay } from './components/Display/CostDisplay';
 import { RouteStats } from './components/Display/RouteStats';
+import { AlternativePricing } from './components/Display/AlternativePricing';
+import { ShareButtons } from './components/Display/ShareButtons';
 import { SimulationControls } from './components/Controls/SimulationControls';
 import { LocationPickerOverlay, LocationPickerUI } from './components/Controls/LocationPicker';
 import styles from './styles/LimeBikeSimulator.module.css';
@@ -19,8 +21,6 @@ import styles from './styles/LimeBikeSimulator.module.css';
 const DEFAULT_UNLOCK_FEE = 1.0;
 const DEFAULT_PER_MINUTE_RATE = 0.2;
 const DEFAULT_SIMULATION_SPEED = 10;
-const DEFAULT_MIN_WAIT_TIME = 15;
-const DEFAULT_MAX_WAIT_TIME = 90;
 
 type PickerMode = 'start' | 'end' | null;
 
@@ -30,8 +30,6 @@ export function LimeBikeSimulator({
   unlockFee = DEFAULT_UNLOCK_FEE,
   perMinuteRate = DEFAULT_PER_MINUTE_RATE,
   simulationSpeed: initialSimulationSpeed = DEFAULT_SIMULATION_SPEED,
-  minWaitTime = DEFAULT_MIN_WAIT_TIME,
-  maxWaitTime = DEFAULT_MAX_WAIT_TIME,
   width = '100%',
   height = 600,
   showControls = true,
@@ -85,8 +83,6 @@ export function LimeBikeSimulator({
     trafficLights,
     totalDistance,
     simulationSpeed,
-    minWaitTime,
-    maxWaitTime,
   });
 
   // Cost calculation
@@ -164,6 +160,7 @@ export function LimeBikeSimulator({
             trafficLights={trafficLights}
             currentIndex={simState.currentTrafficLightIndex}
             isWaitingAtLight={simState.isWaitingAtLight}
+            elapsedTime={simState.elapsedTime}
           />
 
           {/* Bike marker */}
@@ -221,7 +218,7 @@ export function LimeBikeSimulator({
               )}
 
               {/* Cost display */}
-              <CostDisplay costs={costs} state={simState} />
+              <CostDisplay costs={costs} state={simState} perMinuteRate={perMinuteRate} />
 
               {/* Route stats */}
               <RouteStats
@@ -229,6 +226,21 @@ export function LimeBikeSimulator({
                 totalDistance={totalDistance}
                 totalTrafficLights={trafficLights.length}
               />
+
+              {/* Alternative pricing comparison - show when finished */}
+              {simState.status === 'finished' && (
+                <AlternativePricing costs={costs} totalDistance={totalDistance} />
+              )}
+
+              {/* Share buttons - show when finished */}
+              {simState.status === 'finished' && (
+                <ShareButtons
+                  totalDistance={totalDistance}
+                  stopCount={simState.lightsEncountered}
+                  stopTime={simState.totalWaitTime}
+                  stopRevenue={costs.stopRevenue}
+                />
+              )}
             </>
           )}
         </div>

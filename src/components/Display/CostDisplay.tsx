@@ -4,6 +4,7 @@ import styles from '../../styles/LimeBikeSimulator.module.css';
 interface CostDisplayProps {
   costs: CostBreakdown;
   state: SimulationState;
+  perMinuteRate: number;
 }
 
 function formatCurrency(amount: number): string {
@@ -16,11 +17,14 @@ function formatTime(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-export function CostDisplay({ costs, state }: CostDisplayProps) {
+export function CostDisplay({ costs, state, perMinuteRate }: CostDisplayProps) {
   const { status, elapsedTime, totalWaitTime, currentWaitTime, isWaitingAtLight, lightsEncountered } = state;
   const effectiveWaitTime = totalWaitTime + (isWaitingAtLight ? currentWaitTime : 0);
 
   const isFinished = status === 'finished';
+
+  // Calculate live revenue being generated while stopped
+  const liveStopRevenue = (currentWaitTime / 60) * perMinuteRate;
 
   return (
     <div className={styles.costDisplay}>
@@ -33,12 +37,12 @@ export function CostDisplay({ costs, state }: CostDisplayProps) {
       {/* Comparison */}
       <div className={styles.costComparison}>
         <div className={styles.costRow}>
-          <span className={styles.costRowLabel}>Ideal ride (no stops):</span>
+          <span className={styles.costRowLabel}>Uninterrupted ride:</span>
           <span className={styles.costRowValue}>{formatCurrency(costs.idealCost)}</span>
         </div>
-        <div className={`${styles.costRow} ${styles.costWasted}`}>
-          <span className={styles.costRowLabel}>Money wasted waiting:</span>
-          <span className={styles.costRowValue}>{formatCurrency(costs.wastedMoney)}</span>
+        <div className={`${styles.costRow} ${styles.stopRevenue}`}>
+          <span className={styles.costRowLabel}>Stop-time revenue:</span>
+          <span className={styles.costRowValue}>{formatCurrency(costs.stopRevenue)}</span>
         </div>
       </div>
 
@@ -49,7 +53,7 @@ export function CostDisplay({ costs, state }: CostDisplayProps) {
           <span className={styles.statValue}>{formatTime(elapsedTime)}</span>
         </div>
         <div className={styles.statItem}>
-          <span className={styles.statLabel}>Time waiting</span>
+          <span className={styles.statLabel}>Time stopped</span>
           <span className={`${styles.statValue} ${styles.statWaiting}`}>
             {formatTime(effectiveWaitTime)}
           </span>
@@ -60,21 +64,22 @@ export function CostDisplay({ costs, state }: CostDisplayProps) {
         </div>
       </div>
 
-      {/* Waiting indicator */}
+      {/* Live revenue counter while stopped */}
       {isWaitingAtLight && (
         <div className={styles.waitingIndicator}>
           <div className={styles.waitingDot} />
-          <span>Waiting at traffic light... ({Math.floor(currentWaitTime)}s)</span>
+          <span>Stopped at light</span>
+          <span className={styles.liveRevenue}>+{formatCurrency(liveStopRevenue)}</span>
         </div>
       )}
 
       {/* Finished summary */}
       {isFinished && (
         <div className={styles.finishedSummary}>
-          <div className={styles.summaryTitle}>Ride Complete!</div>
+          <div className={styles.summaryTitle}>Ride Complete</div>
           <div className={styles.summaryText}>
-            You spent <strong>{formatTime(effectiveWaitTime)}</strong> waiting at {lightsEncountered} traffic light{lightsEncountered !== 1 ? 's' : ''},
-            costing you an extra <strong>{formatCurrency(costs.wastedMoney)}</strong>.
+            Stopped at <strong>{lightsEncountered}</strong> traffic light{lightsEncountered !== 1 ? 's' : ''} for <strong>{formatTime(effectiveWaitTime)}</strong>.
+            Stop-time revenue: <strong>{formatCurrency(costs.stopRevenue)}</strong>.
           </div>
         </div>
       )}
