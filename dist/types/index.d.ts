@@ -14,9 +14,21 @@ export declare const BIKE_PHYSICS: {
     readonly ACCELERATION_RATE: 1.341;
     readonly DECELERATION_RATE: 2.235;
 };
+export interface PrecomputedRoute {
+    coordinates: [number, number][];
+    distance: number;
+    trafficLights: PrecomputedTrafficLight[];
+}
+export interface PrecomputedTrafficLight {
+    id: number;
+    lat: number;
+    lng: number;
+    distanceFromStart: number;
+}
 export interface LimeBikeSimulatorProps {
     startLocation?: Location;
     endLocation?: Location;
+    precomputedRoute?: PrecomputedRoute;
     unlockFee?: number;
     perMinuteRate?: number;
     simulationSpeed?: number;
@@ -113,7 +125,7 @@ export interface CostBreakdown {
 }
 export declare const PRICING_MODELS: {
     readonly PER_MINUTE: 0.2;
-    readonly PER_KM: 0.15;
+    readonly PER_KM: 0.3;
     readonly UNLOCK_FEE: 1;
 };
 export interface RouteSegment {

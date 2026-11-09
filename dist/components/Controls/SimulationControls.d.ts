@@ -8,7 +8,8 @@ interface SimulationControlsProps {
     isReady: boolean;
     simulationSpeed: number;
     onSpeedChange?: (speed: number) => void;
+    hideProgress?: boolean;
 }
-export declare function SimulationControls({ status, onPlay, onPause, onReset, isReady, simulationSpeed, onSpeedChange, }: SimulationControlsProps): import("react/jsx-runtime").JSX.Element;
+export declare function SimulationControls({ status, onPlay, onPause, onReset, isReady, simulationSpeed, onSpeedChange, hideProgress, }: SimulationControlsProps): import("react/jsx-runtime").JSX.Element;
 export {};
 //# sourceMappingURL=SimulationControls.d.ts.map

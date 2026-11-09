@@ -18,11 +18,29 @@ export const BIKE_PHYSICS = {
   DECELERATION_RATE: 2.235, // m/s² (6.7056 / 3)
 } as const;
 
+// Pre-computed route data for caching/static routes
+export interface PrecomputedRoute {
+  coordinates: [number, number][]; // [lng, lat] array from OSRM
+  distance: number; // total meters
+  trafficLights: PrecomputedTrafficLight[]; // simplified traffic light data
+}
+
+// Simplified traffic light for pre-computed routes (timing generated at runtime)
+export interface PrecomputedTrafficLight {
+  id: number;
+  lat: number;
+  lng: number;
+  distanceFromStart: number; // meters from route start
+}
+
 // Props for the main component
 export interface LimeBikeSimulatorProps {
   // Location props
   startLocation?: Location;
   endLocation?: Location;
+
+  // Pre-computed route data (skips API calls if provided)
+  precomputedRoute?: PrecomputedRoute;
 
   // Pricing props (configurable) - in GBP
   unlockFee?: number; // Default: 1.00
@@ -196,7 +214,7 @@ export interface CostBreakdown {
 // Alternative pricing rates for comparison
 export const PRICING_MODELS = {
   PER_MINUTE: 0.20, // Current Lime rate (£/min)
-  PER_KM: 0.15, // Industry average distance rate
+  PER_KM: 0.30, // 30p per km
   UNLOCK_FEE: 1.00, // Standard unlock
 } as const;
 

@@ -42,7 +42,14 @@ export function CostDisplay({ costs, state, perMinuteRate }: CostDisplayProps) {
         </div>
         <div className={`${styles.costRow} ${styles.stopRevenue}`}>
           <span className={styles.costRowLabel}>Stop-time revenue:</span>
-          <span className={styles.costRowValue}>{formatCurrency(costs.stopRevenue)}</span>
+          <span className={styles.costRowValue}>
+            {formatCurrency(costs.stopRevenue)}
+            {costs.totalCost > 0 && (
+              <span className={styles.costPercentage}>
+                {' '}({Math.round((costs.stopRevenue / costs.totalCost) * 100)}%)
+              </span>
+            )}
+          </span>
         </div>
       </div>
 

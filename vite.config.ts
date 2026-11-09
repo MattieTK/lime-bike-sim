@@ -13,10 +13,12 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        'lime-bike-simulator': resolve(__dirname, 'src/index.ts'),
+        'ssr-safe': resolve(__dirname, 'src/ssr-safe.tsx'),
+      },
       name: 'LimeBikeSimulator',
-      formats: ['es', 'umd'],
-      fileName: (format) => `lime-bike-simulator.${format}.js`,
+      formats: ['es'],
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime'],
@@ -31,6 +33,8 @@ export default defineConfig({
           if (assetInfo.name === 'style.css') return 'style.css';
           return assetInfo.name || 'asset';
         },
+        // Ensure chunks are inlined into the ssr-safe bundle
+        inlineDynamicImports: false,
       },
     },
     cssCodeSplit: false,

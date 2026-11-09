@@ -22,16 +22,127 @@
   z-index: 1000;
 }
 
+.mapOverlayBottomLeft {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1000;
+  display: flex;
+  gap: 8px;
+}
+
+.resetButtonFloat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(15, 52, 96, 0.95);
+  backdrop-filter: blur(8px);
+  border: none;
+  border-radius: 8px;
+  color: #aaa;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.resetButtonFloat:hover {
+  background: rgba(15, 52, 96, 1);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.resetButtonFloat:active {
+  transform: scale(0.95);
+}
+
+.resetButtonFloat svg {
+  width: 18px;
+  height: 18px;
+}
+
+.fullscreenButtonFloat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(15, 52, 96, 0.95);
+  backdrop-filter: blur(8px);
+  border: none;
+  border-radius: 8px;
+  color: #aaa;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fullscreenButtonFloat:hover {
+  background: rgba(15, 52, 96, 1);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.fullscreenButtonFloat:active {
+  transform: scale(0.95);
+}
+
+.fullscreenButtonFloat svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Fullscreen mode */
+.fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  z-index: 9999 !important;
+}
+
 /* Info panel - overlay on map */
 .infoPanel {
   position: absolute;
+  top: 10px;
   bottom: 10px;
   right: 10px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
   gap: 8px;
   max-width: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.infoPanel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.infoPanel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.infoPanel::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
 }
 
 /* Cost display - compact card */
@@ -88,6 +199,11 @@
 .stopRevenue .costRowValue {
   color: #f59e0b;
   font-weight: 700;
+}
+
+.costPercentage {
+  font-size: 10px;
+  opacity: 0.8;
 }
 
 .liveRevenue {
@@ -642,22 +758,132 @@
   color: #fff;
 }
 
-/* Responsive - stack on very small screens */
-@media (max-width: 400px) {
+/* Collapsible sections for mobile */
+.collapsibleSection {
+  background: rgba(15, 52, 96, 0.95);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.collapsibleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.collapsibleHeader:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.collapsibleTitle {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #aaa;
+}
+
+.collapsibleHighlight {
+  margin-left: auto;
+  margin-right: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #32de84;
+}
+
+.collapsibleChevron {
+  color: #666;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.collapsibleSection:not(.collapsed) .collapsibleChevron {
+  transform: rotate(180deg);
+}
+
+.collapsibleContent {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+  opacity: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.collapsibleContent::-webkit-scrollbar {
+  width: 3px;
+}
+
+.collapsibleContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.collapsibleContent::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+}
+
+.collapsed .collapsibleContent {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* Remove default styling when wrapped in collapsible */
+.collapsibleSection .costDisplay,
+.collapsibleSection .routeStats,
+.collapsibleSection .alternativePricing,
+.collapsibleSection .shareButtons {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  backdrop-filter: none;
+}
+
+.collapsibleSection .costDisplay {
+  padding-top: 0;
+}
+
+/* Responsive - stack on small screens */
+@media (max-width: 480px) {
   .infoPanel {
-    left: 10px;
-    right: 10px;
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
     max-width: none;
+    max-height: 70%;
+    gap: 6px;
+  }
+
+  /* When ride is finished, allow panel to take more space for results */
+  .infoPanel[data-status="finished"] {
+    max-height: 85%;
   }
 
   .controls {
     flex-wrap: wrap;
+    padding: 8px;
   }
 
   .speedControl {
     width: 100%;
     margin-left: 0;
     justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 4px;
   }
 
   .shareButtonGroup {
@@ -666,5 +892,63 @@
 
   .shareButton {
     flex: 1 1 calc(50% - 3px);
+  }
+
+  /* Compact fonts on mobile */
+  .costValue {
+    font-size: 20px;
+  }
+
+  .statValue {
+    font-size: 12px;
+  }
+
+  .costLabel,
+  .altPricingTitle,
+  .shareTitle {
+    font-size: 9px;
+  }
+
+  /* Location picker adjustments */
+  .mapOverlay {
+    top: 8px;
+    left: 8px;
+  }
+
+  .locationPicker {
+    padding: 8px;
+    min-width: 140px;
+  }
+
+  /* Collapsible sections on mobile - limit individual section heights */
+  .collapsibleContent {
+    max-height: 200px;
+  }
+
+  .collapsibleSection:not(.collapsed) .collapsibleContent {
+    padding-bottom: 8px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .infoPanel {
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+  }
+
+  .controlButtons {
+    flex: 1;
+  }
+
+  .controlButton {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 6px;
+  }
+
+  .costValue {
+    font-size: 18px;
   }
 }

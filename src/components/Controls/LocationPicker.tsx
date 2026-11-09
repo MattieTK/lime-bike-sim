@@ -135,13 +135,17 @@ export function LocationPickerUI({
   const isComplete = startLocation && endLocation;
 
   return (
-    <div className={styles.locationPicker}>
+    <div className={styles.locationPicker} data-component="location-picker">
       <div className={styles.pickerTitle}>Set Route</div>
 
       <div className={styles.pickerButtons}>
         <button
           className={`${styles.pickerButton} ${pickerMode === 'start' ? styles.pickerActive : ''} ${startLocation ? styles.pickerSet : ''}`}
           onClick={() => onModeChange(pickerMode === 'start' ? null : 'start')}
+          data-action="set-location"
+          data-location="start"
+          data-active={pickerMode === 'start'}
+          data-set={!!startLocation}
         >
           <span className={styles.pickerDot} style={{ background: '#22c55e' }} />
           {startLocation ? 'Start set' : 'Set start'}
@@ -150,6 +154,10 @@ export function LocationPickerUI({
         <button
           className={`${styles.pickerButton} ${pickerMode === 'end' ? styles.pickerActive : ''} ${endLocation ? styles.pickerSet : ''}`}
           onClick={() => onModeChange(pickerMode === 'end' ? null : 'end')}
+          data-action="set-location"
+          data-location="end"
+          data-active={pickerMode === 'end'}
+          data-set={!!endLocation}
         >
           <span className={styles.pickerDot} style={{ background: '#ef4444' }} />
           {endLocation ? 'End set' : 'Set end'}
@@ -170,7 +178,11 @@ export function LocationPickerUI({
       )}
 
       {hasLocations && (
-        <button className={styles.clearButton} onClick={onClear}>
+        <button
+          className={styles.clearButton}
+          onClick={onClear}
+          data-action="clear-locations"
+        >
           Clear locations
         </button>
       )}

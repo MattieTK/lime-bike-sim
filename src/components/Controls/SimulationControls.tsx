@@ -9,6 +9,7 @@ interface SimulationControlsProps {
   isReady: boolean;
   simulationSpeed: number;
   onSpeedChange?: (speed: number) => void;
+  hideProgress?: boolean;
 }
 
 export function SimulationControls({
@@ -19,13 +20,14 @@ export function SimulationControls({
   isReady,
   simulationSpeed,
   onSpeedChange,
+  hideProgress = false,
 }: SimulationControlsProps) {
   const isPlaying = status === 'playing';
   const isFinished = status === 'finished';
   const isPaused = status === 'paused';
 
   return (
-    <div className={styles.controls}>
+    <div className={styles.controls} data-component="simulation-controls">
       <div className={styles.controlButtons}>
         {/* Play/Pause button */}
         {!isFinished && (
@@ -33,6 +35,8 @@ export function SimulationControls({
             className={`${styles.controlButton} ${styles.primaryButton}`}
             onClick={isPlaying ? onPause : onPlay}
             disabled={!isReady}
+            data-action={isPlaying ? 'pause' : 'play'}
+            data-status={status}
           >
             {isPlaying ? (
               <>
@@ -51,6 +55,7 @@ export function SimulationControls({
           <button
             className={`${styles.controlButton} ${styles.secondaryButton}`}
             onClick={onReset}
+            data-action="reset"
           >
             <ResetIcon /> Reset
           </button>
@@ -59,7 +64,7 @@ export function SimulationControls({
 
       {/* Speed control */}
       {onSpeedChange && (
-        <div className={styles.speedControl}>
+        <div className={styles.speedControl} data-component="speed-control">
           <label className={styles.speedLabel}>
             Speed: {simulationSpeed}x
           </label>
@@ -70,22 +75,26 @@ export function SimulationControls({
             value={simulationSpeed}
             onChange={(e) => onSpeedChange(Number(e.target.value))}
             className={styles.speedSlider}
+            data-action="speed-change"
+            data-speed={simulationSpeed}
           />
         </div>
       )}
 
-      {/* Status indicator */}
-      <div className={styles.statusIndicator}>
-        <span className={`${styles.statusDot} ${styles[`status${status.charAt(0).toUpperCase() + status.slice(1)}`]}`} />
-        <span className={styles.statusText}>
-          {status === 'idle' && 'Ready to start'}
-          {status === 'loading' && 'Loading...'}
-          {status === 'ready' && 'Ready'}
-          {status === 'playing' && 'Riding...'}
-          {status === 'paused' && 'Paused'}
-          {status === 'finished' && 'Ride complete'}
-        </span>
-      </div>
+      {/* Status indicator - hide when finished */}
+      {!hideProgress && (
+        <div className={styles.statusIndicator}>
+          <span className={`${styles.statusDot} ${styles[`status${status.charAt(0).toUpperCase() + status.slice(1)}`]}`} />
+          <span className={styles.statusText}>
+            {status === 'idle' && 'Ready to start'}
+            {status === 'loading' && 'Loading...'}
+            {status === 'ready' && 'Ready'}
+            {status === 'playing' && 'Riding...'}
+            {status === 'paused' && 'Paused'}
+            {status === 'finished' && 'Ride complete'}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
