@@ -5,3 +5,9 @@ node_modules/
 .env.*
 .dev.vars
 .wrangler/
+
+# Cloudflare build output
+.cloudflare/
+
+# Build output. Built packages are published on the release branch (npm run release).
+dist/

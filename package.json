@@ -1,16 +1,19 @@
 {
   "name": "lime-bike-simulator",
-  "version": "1.0.0",
-  "description": "Interactive Lime bike ride simulator for London with traffic light cost analysis",
+  "version": "2.0.0",
+  "description": "Interactive Lime bike ride simulator for London: what per-minute pricing charges you for waiting at red lights",
   "type": "module",
-  "main": "./dist/lime-bike-simulator.umd.js",
-  "module": "./dist/lime-bike-simulator.es.js",
+  "main": "./dist/lime-bike-simulator.js",
+  "module": "./dist/lime-bike-simulator.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/lime-bike-simulator.es.js",
-      "require": "./dist/lime-bike-simulator.umd.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/lime-bike-simulator.js"
+    },
+    "./ssr-safe": {
+      "types": "./dist/ssr-safe.d.ts",
+      "import": "./dist/ssr-safe.js"
     },
     "./style.css": "./dist/style.css"
   },
@@ -19,30 +22,30 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && tsc -p tsconfig.build.json",
     "preview": "vite preview",
-    "export": "npm run build && node scripts/export.cjs",
-    "generate-route": "node scripts/generate-route.cjs"
+    "test": "vitest run",
+    "generate-route": "node scripts/generate-route.mjs",
+    "build-signals": "node scripts/build-signals.mjs",
+    "release": "node scripts/release.mjs"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
-  },
-  "dependencies": {
-    "effect": "^3.19.13",
-    "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.8",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^5.2.0",
+    "esbuild": "^0.28.2",
+    "leaflet": "^1.9.4",
+    "osm-pbf-parser-node": "^1.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10",
-    "vite-plugin-dts": "^3.7.0",
+    "vite": "^7.3.8",
+    "vitest": "^5.1.0",
     "wrangler": "^4.69.0"
   },
   "keywords": [
@@ -55,5 +58,9 @@
     "react",
     "leaflet"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MattieTK/lime-bike-sim.git"
+  }
 }

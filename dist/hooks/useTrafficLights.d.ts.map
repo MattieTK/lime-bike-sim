@@ -1,1 +1,0 @@
-{"version":3,"file":"useTrafficLights.d.ts","sourceRoot":"","sources":["../../src/hooks/useTrafficLights.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,UAAU,CAAC;AAG7C,UAAU,sBAAsB;IAC9B,aAAa,EAAE,YAAY,EAAE,CAAC;IAC9B,SAAS,EAAE,OAAO,CAAC;IACnB,KAAK,EAAE,MAAM,GAAG,IAAI,CAAC;CACtB;AAED,wBAAgB,gBAAgB,CAC9B,WAAW,EAAE,CAAC,MAAM,EAAE,MAAM,CAAC,EAAE,GAC9B,sBAAsB,CAiFxB"}
