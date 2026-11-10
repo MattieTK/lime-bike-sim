@@ -1,1 +1,0 @@
-{"version":3,"file":"RouteStats.d.ts","sourceRoot":"","sources":["../../../src/components/Display/RouteStats.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,aAAa,CAAC;AAInD,UAAU,eAAe;IACvB,KAAK,EAAE,eAAe,CAAC;IACvB,aAAa,EAAE,MAAM,CAAC;IACtB,kBAAkB,EAAE,MAAM,CAAC;CAC5B;AAcD,wBAAgB,UAAU,CAAC,EAAE,KAAK,EAAE,aAAa,EAAE,kBAAkB,EAAE,EAAE,eAAe,2CA0CvF"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"BikeMarker.d.ts","sourceRoot":"","sources":["../../../src/components/Map/BikeMarker.tsx"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,aAAa,CAAC;AAExD,UAAU,eAAe;IACvB,QAAQ,EAAE,oBAAoB,GAAG,IAAI,CAAC;IACtC,SAAS,CAAC,EAAE,OAAO,CAAC;CACrB;AAmCD,wBAAgB,UAAU,CAAC,EAAE,QAAQ,EAAE,SAAiB,EAAE,EAAE,eAAe,kDAY1E"}

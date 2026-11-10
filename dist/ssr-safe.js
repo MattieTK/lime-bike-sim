@@ -7,9 +7,9 @@ function c({
 }) {
   const [r, a] = u(null);
   d(() => {
-    import("./LimeBikeSimulator-6yutZyqr.js").then((t) => t.a).then((t) => {
+    import("./LimeBikeSimulator-BT5l6h4h.js").then((t) => t.e).then((t) => {
       a(() => t.LimeBikeSimulator);
-    }), import("./LimeBikeSimulator.module-C8DGL4Vo.js");
+    }), import("./LimeBikeSimulator.module-CqlyXLKh.js");
   }, []);
   const l = /* @__PURE__ */ n(
     "div",

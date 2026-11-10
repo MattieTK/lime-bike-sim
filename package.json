@@ -1,7 +1,7 @@
 {
   "name": "lime-bike-simulator",
-  "version": "1.0.0",
-  "description": "Interactive Lime bike ride simulator for London with traffic light cost analysis",
+  "version": "2.0.0",
+  "description": "Interactive Lime bike ride simulator for London: what per-minute pricing charges you for waiting at red lights",
   "type": "module",
   "main": "./dist/lime-bike-simulator.js",
   "module": "./dist/lime-bike-simulator.js",
@@ -21,8 +21,8 @@
     "dist"
   ],
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "keywords": [
     "lime",
